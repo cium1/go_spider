@@ -10,8 +10,10 @@ import (
 	"path/filepath"
 )
 
+type FileSize int64
+
 const (
-	B = 1 << (10 * iota)
+	B FileSize = 1 << (10 * iota)
 	KB
 	MB
 	GB
@@ -70,7 +72,7 @@ func Download(content string) (scheduler Scheduler) {
 	if err != nil {
 		return
 	}
-	fmt.Println(fileName, FileByte(int(size)))
+	fmt.Println(fileName, FileByte(FileSize(size)))
 	return
 }
 
@@ -83,15 +85,15 @@ func Mkdir(dir string) error {
 }
 
 // 计算文件大小
-func FileByte(length int) string {
+func FileByte(size FileSize) string {
 	switch {
 	default:
-		return fmt.Sprintf("%.2f%s", float64(length)/float64(B), "B")
-	case length >= KB && length < MB:
-		return fmt.Sprintf("%.2f%s", float64(length)/float64(KB), "KB")
-	case length >= MB && length < GB:
-		return fmt.Sprintf("%.2f%s", float64(length)/float64(MB), "MB")
-	case length >= GB && length < TB:
-		return fmt.Sprintf("%.2f%s", float64(length)/float64(GB), "GB")
+		return fmt.Sprintf("%.2f%s", float64(size)/float64(B), "B")
+	case size >= KB && size < MB:
+		return fmt.Sprintf("%.2f%s", float64(size)/float64(KB), "KB")
+	case size >= MB && size < GB:
+		return fmt.Sprintf("%.2f%s", float64(size)/float64(MB), "MB")
+	case size >= GB && size < TB:
+		return fmt.Sprintf("%.2f%s", float64(size)/float64(GB), "GB")
 	}
 }

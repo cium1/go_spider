@@ -49,7 +49,7 @@ func (e *Engine) Start() {
 		e.WorkerNum = 1000
 	}
 
-	request, response, result := make(chan Request, e.WorkerNum), make(chan Scheduler, e.WorkerNum), make(chan Processor, e.WorkerNum)
+	request, response, result := make(chan Request, 1), make(chan Scheduler, 1), make(chan Processor, 1)
 
 	//发送初始请求
 	for _, r := range e.Requests {

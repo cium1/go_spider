@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"regexp"
 	"go_spider/engine"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -13,9 +13,15 @@ var (
 	//基础URL
 	hHost = "http://hbimg.b0.upaiyun.com/"
 	hBase = "http://huaban.com/partner/uc/aimeinv/pins/"
+)
+
+var (
 	//正则编译
 	hKeyMust = regexp.MustCompile(`"key":"(.*?)"`)
 	hIdMust  = regexp.MustCompile(`"pin_id":(\d+),`)
+)
+
+var (
 	//定时器限速
 	timer = time.Tick(time.Millisecond * 10)
 )

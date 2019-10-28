@@ -11,10 +11,10 @@ func main() {
 	e := engine.New()
 	e.AddRequest(engine.Request{
 		URL:  "http://xxx.com/thread-1967472-1-10.html",
-		FUNC: new(parser.TaoHua).Handle,
+		FUNC: (&parser.TaoHua{}).Handle,
 	}, engine.Request{
 		URL:  "http://huaban.com/partner/uc/aimeinv/pins/",
-		FUNC: new(parser.HuaBan).Handle,
+		FUNC: (&parser.HuaBan{}).Handle,
 	})
 	e.Start()
 }
