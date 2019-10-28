@@ -2,15 +2,15 @@ package parser
 
 import (
 	"github.com/PuerkitoBio/goquery"
-	"net/http"
 	"go_spider/engine"
+	"net/http"
 )
 
 type TaoHua struct {
 }
 
 var (
-	tHost = "http://thznn.com/"
+	tHost = "http://xxx.com/"
 )
 
 func (t *TaoHua) Handle(url string) (scheduler engine.Scheduler) {
