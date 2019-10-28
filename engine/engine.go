@@ -1,50 +1,104 @@
 package engine
 
-type Engine struct {
-	WorkerNum int
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+type Request struct {
+	URL  string
+	FUNC func(url string) Scheduler
 }
 
+type Scheduler struct {
+	Requests   []Request
+	Processors []Processor
+}
+
+type Processor struct {
+	Content string
+	FUNC    func(content string) Scheduler
+}
+
+type Engine struct {
+	WorkerNum int
+	Requests  []Request
+}
+
+var (
+	wg sync.WaitGroup
+)
+
+// 初始化
 func New() *Engine {
 	return new(Engine)
 }
 
-func (e *Engine) Run(seeds ...Request) {
+// 初始请求
+func (e *Engine) AddRequest(request ...Request) {
+	e.Requests = append(e.Requests, request...)
+}
 
-	req := make(chan Request, 100)
-	resp := make(chan Response, 100)
-	res := make(chan Result, 100)
+// 开始
+func (e *Engine) Start() {
+
+	start := time.Now()
+
+	if e.WorkerNum == 0 {
+		e.WorkerNum = 1000
+	}
+
+	request, response, result := make(chan Request, e.WorkerNum), make(chan Scheduler, e.WorkerNum), make(chan Processor, e.WorkerNum)
+
+	//发送初始请求
+	for _, r := range e.Requests {
+		request <- r
+	}
 
 	//创建worker
 	for i := 0; i < e.WorkerNum; i++ {
-		go e.worker(req, resp, res)
+		wg.Add(1)
+		go e.worker(request, response, result)
 	}
 
-	//发送初始请求
-	for _, r := range seeds {
-		req <- r
-	}
+	wg.Wait()
 
-	select {}
+	d, _ := time.ParseDuration("60s")
+	fmt.Println(time.Since(start.Add(d)))
 }
 
-func (e *Engine) worker(req chan Request, resp chan Response, res chan Result) {
-
+// 创建进程
+func (e *Engine) worker(requestChan chan Request, responseChan chan Scheduler, resultChan chan Processor) {
+	defer wg.Done()
 	for {
+
 		select {
 
-		case request := <-req:
-			resp <- request.Func(request.Url)
-
-		case response := <-resp:
-			for _, request := range response.Requests {
-				req <- request
-			}
-			for _, result := range response.Results {
-				res <- result
+		case request := <-requestChan:
+			if request.FUNC != nil {
+				responseChan <- request.FUNC(request.URL)
 			}
 
-		case result := <-res:
-			resp <- result.Func(result.Addr)
+		case response := <-responseChan:
+			if response.Requests != nil {
+				for _, request := range response.Requests {
+					requestChan <- request
+				}
+			}
+			if response.Processors != nil {
+				for _, result := range response.Processors {
+					resultChan <- result
+				}
+			}
+
+		case result := <-resultChan:
+			if result.FUNC != nil {
+				responseChan <- result.FUNC(result.Content)
+			}
+
+		case <-time.After(time.Duration(time.Second * 60)): //超时
+			return
 
 		}
 	}
