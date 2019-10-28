@@ -50,7 +50,7 @@ func Download(content string) (scheduler Scheduler) {
 		return
 	}
 
-	resp, err := client.Do(request)
+	response, err := client.Do(request)
 	if err != nil {
 		scheduler.Processors = append(scheduler.Processors, Processor{
 			Content: content,
@@ -58,7 +58,7 @@ func Download(content string) (scheduler Scheduler) {
 		})
 		return
 	}
-	defer resp.Body.Close()
+	defer response.Body.Close()
 
 	file, err := os.Create(filepath.Dir(dir) + string(os.PathSeparator) + fileName)
 	if err != nil {
@@ -67,7 +67,7 @@ func Download(content string) (scheduler Scheduler) {
 	defer file.Close()
 
 	writer := bufio.NewWriter(file)
-	reader := bufio.NewReaderSize(resp.Body, 64*1024)
+	reader := bufio.NewReaderSize(response.Body, 64*1024)
 	size, err := io.Copy(writer, reader)
 	if err != nil {
 		return
