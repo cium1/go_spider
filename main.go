@@ -11,7 +11,8 @@ func main() {
 	//e.AddRequest(engine.Request{
 	//	URL:  "http://xxx.com/thread-1967472-1-10.html",
 	//	FUNC: (&parser.TaoHua{}).Handle,
-	//}, engine.Request{
+	//})
+	//e.AddRequest(engine.Request{
 	//	URL:  "http://huaban.com/partner/uc/aimeinv/pins/",
 	//	FUNC: (&parser.HuaBan{}).Handle,
 	//})
