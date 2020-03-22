@@ -24,7 +24,7 @@ var (
 	dir = "images/"
 )
 
-func Download(content string) (scheduler Scheduler) {
+func Download(content string, operate interface{}) (scheduler Scheduler) {
 
 	scheduler = Scheduler{}
 
@@ -54,7 +54,7 @@ func Download(content string) (scheduler Scheduler) {
 	if err != nil {
 		scheduler.Processors = append(scheduler.Processors, Processor{
 			Content: content,
-			FUNC:    Download,
+			Func:    Download,
 		})
 		return
 	}
@@ -72,6 +72,7 @@ func Download(content string) (scheduler Scheduler) {
 	if err != nil {
 		return
 	}
+	_ = writer.Flush()
 	fmt.Println(fileName, FileByte(FileSize(size)))
 	return
 }

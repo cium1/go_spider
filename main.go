@@ -2,23 +2,17 @@ package main
 
 import (
 	"go_spider/engine"
-	"runtime"
+	"go_spider/parser"
+	"time"
 )
 
 func main() {
-	runtime.GOMAXPROCS(runtime.NumCPU())
 	e := engine.New()
-	//e.AddRequest(engine.Request{
-	//	URL:  "http://xxx.com/thread-1967472-1-10.html",
-	//	FUNC: (&parser.TaoHua{}).Handle,
-	//})
-	//e.AddRequest(engine.Request{
-	//	URL:  "http://huaban.com/partner/uc/aimeinv/pins/",
-	//	FUNC: (&parser.HuaBan{}).Handle,
-	//})
-	//e.AddRequest(engine.Request{
-	//	URL:  "https://cn.bing.com/images/trending?form=Z9LH",
-	//	FUNC: (&parser.Bing{}).Home,
-	//})
+	e.WorkerNum = 200
+	e.TimeOut = time.Minute * 2
+	e.AddRequest(engine.Request{
+		Url:  "http://xxx.cc/thread-1930952-1-1.html",
+		Func: (&parser.TaoHua{Dir: "../taohuazhu"}).Request,
+	})
 	e.Start()
 }
